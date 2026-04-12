@@ -1,0 +1,55 @@
+v {xschem version=3.4.5 file_version=1.2}
+
+G {}
+
+K {type=subcircuit
+
+format="@name @pinlist @symname"
+
+template="name=x1"
+
+}
+
+V {}
+
+S {}
+
+E {}
+
+L 4 -80 -80 80 -80 {}
+
+L 4 80 -80 80 80 {}
+
+L 4 80 80 -80 80 {}
+
+L 4 -80 80 -80 -80 {}
+
+B 5 -2.5 -82.5 2.5 -77.5 {name=VPWR dir=inout sim_pinnumber=1}
+
+B 5 -2.5 77.5 2.5 82.5 {name=VGND dir=inout sim_pinnumber=2}
+
+B 5 -82.5 -42.5 -77.5 -37.5 {name=ctrl dir=in sim_pinnumber=3}
+
+B 5 -82.5 -22.5 -77.5 -17.5 {name=bias_in dir=in sim_pinnumber=4}
+
+B 5 -82.5 17.5 -77.5 22.5 {name=clk_p dir=in sim_pinnumber=5}
+
+B 5 -82.5 37.5 -77.5 42.5 {name=clk_n dir=in sim_pinnumber=6}
+
+B 5 77.5 -2.5 82.5 2.5 {name=clk_out dir=out sim_pinnumber=7}
+
+T {@symname} -30 -10 0 0 0.3 0.3 {}
+
+T {VPWR} -10 -75 0 0 0.2 0.2 {}
+
+T {VGND} -10 65 0 0 0.2 0.2 {}
+
+T {ctrl} -70 -45 0 0 0.2 0.2 {}
+
+T {bias} -70 -25 0 0 0.2 0.2 {}
+
+T {clk_p} -70 15 0 0 0.2 0.2 {}
+
+T {clk_n} -70 35 0 0 0.2 0.2 {}
+
+T {clk_out} 35 -5 0 0 0.2 0.2 {}
