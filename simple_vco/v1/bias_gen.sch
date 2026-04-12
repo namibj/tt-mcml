@@ -112,7 +112,7 @@ N -1240 -50 -290 -50 {lab=bias_out}
 N -1160 -320 -980 -320 {lab=VPWR}
 N -1160 40 -1160 70 {lab=VGND}
 N -1160 -320 -1160 -240 {lab=VPWR}
-N -1260 -210 -1200 -210 {lab=DISABLE}
+N -1260 -210 -1200 -210 {lab=en}
 N -1330 -50 -1240 -50 {lab=bias_out}
 N -1460 -100 -1160 -100 {lab=#net9}
 N -450 -100 -410 -100 {lab=VPWR}
@@ -135,17 +135,17 @@ N -1160 70 -980 70 {lab=VGND}
 N -1330 40 -1330 70 {lab=VGND}
 N -1460 40 -1460 70 {lab=VGND}
 N -450 -320 -450 -100 {lab=VPWR}
-N -1500 10 -1370 10 {lab=DISABLE}
-N -1540 -210 -1260 -210 {lab=DISABLE}
-N -1540 -210 -1540 10 {lab=DISABLE}
+N -1500 10 -1370 10 {lab=en}
+N -1540 -210 -1260 -210 {lab=en}
+N -1540 -210 -1540 10 {lab=en}
 N -1570 -360 -450 -360 {lab=ctrl}
 N -1570 -320 -1160 -320 {lab=VPWR}
-N -1570 10 -1500 10 {lab=DISABLE}
+N -1570 10 -1500 10 {lab=en}
 N -1570 70 -1160 70 {lab=VGND}
 N 160 -50 420 -50 {lab=bias_out}
 C {devices/iopin.sym} -1570 -320 0 1 {name=p1 lab=VPWR sim_pinnumber=1}
 C {devices/iopin.sym} -1570 70 2 0 {name=p2 lab=VGND sim_pinnumber=2}
-C {devices/ipin.sym} -1570 10 0 0 {name=p3 lab=DISABLE sim_pinnumber=3}
+C {devices/ipin.sym} -1570 10 0 0 {name=p3 lab=en sim_pinnumber=3}
 C {devices/ipin.sym} -1570 -360 0 0 {name=p4 lab=ctrl sim_pinnumber=4}
 C {devices/opin.sym} 420 -50 2 1 {name=p5 lab=bias_out sim_pinnumber=5}
 C {sky130_fd_pr/pfet3_01v8.sym} -350 -210 0 1 {name=M8
