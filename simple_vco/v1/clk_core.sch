@@ -112,10 +112,10 @@ C {devices/ipin.sym} -570 -270 0 0 {name=p3 lab=ctrl sim_pinnumber=3}
 C {devices/ipin.sym} -570 100 0 0 {name=p4 lab=bias_in sim_pinnumber=4}
 C {devices/opin.sym} 1450 -440 2 1 {name=p5 lab=clk_p sim_pinnumber=5}
 C {devices/opin.sym} 1450 -470 2 1 {name=p6 lab=clk_n sim_pinnumber=6}
-C {devices/code_shown.sym} -450 -400 0 0 {name=PARAMS only_toplevel=false value=".param WP=5 LP=0.15
-+ WN_MAIN=2 LN_MAIN=0.15
-+ WN_CC=0.42 LN_CC=0.15
-+ WN_TAIL=5 LN_TAIL=0.15
+C {devices/code_shown.sym} -450 -400 0 0 {name=PARAMS only_toplevel=false value=".param WP=5 LP=0.3
++ WN_MAIN=2 LN_MAIN=0.2
++ WN_CC=0.42 LN_CC=0.2
++ WN_TAIL=5 LN_TAIL=0.5
 "}
 C {sky130_fd_pr/pfet3_01v8.sym} 420 -130 0 0 {name=M3
 W=WP

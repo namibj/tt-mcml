@@ -150,7 +150,7 @@ C {devices/ipin.sym} -1570 -360 0 0 {name=p4 lab=ctrl sim_pinnumber=4}
 C {devices/opin.sym} 420 -50 2 1 {name=p5 lab=bias_out sim_pinnumber=5}
 C {sky130_fd_pr/pfet3_01v8.sym} -350 -210 0 1 {name=M8
 W=5
-L=0.15
+L=0.3
 body=VPWR
 nf=1
 mult=1
@@ -165,7 +165,7 @@ spiceprefix=X
 }
 C {sky130_fd_pr/pfet3_01v8.sym} -170 -100 0 0 {name=M7
 W=2
-L=0.15
+L=0.3
 body=VPWR
 nf=1
 mult=1
@@ -180,7 +180,7 @@ spiceprefix=X
 }
 C {sky130_fd_pr/pfet3_01v8.sym} 30 -100 0 1 {name=M6
 W=2
-L=0.15
+L=0.3
 body=VPWR
 nf=1
 mult=1
@@ -195,7 +195,7 @@ spiceprefix=X
 }
 C {sky130_fd_pr/pfet3_01v8.sym} 140 -210 0 0 {name=M3
 W=5
-L=0.15
+L=0.3
 body=VPWR
 nf=1
 mult=1
@@ -210,7 +210,7 @@ spiceprefix=X
 }
 C {sky130_fd_pr/pfet3_01v8.sym} 320 -210 0 1 {name=M1
 W=5
-L=0.15
+L=0.3
 body=VPWR
 nf=1
 mult=1
@@ -225,7 +225,7 @@ spiceprefix=X
 }
 C {sky130_fd_pr/pfet3_01v8.sym} -90 -210 0 0 {name=M5
 W=5
-L=0.15
+L=0.3
 body=VPWR
 nf=1
 mult=1
@@ -240,7 +240,7 @@ spiceprefix=X
 }
 C {sky130_fd_pr/nfet3_01v8.sym} -130 10 0 1 {name=M9
 W=5
-L=0.15
+L=0.5
 body=VGND
 nf=1
 mult=1
@@ -255,7 +255,7 @@ spiceprefix=X
 }
 C {sky130_fd_pr/nfet3_01v8.sym} -10 10 0 0 {name=M10
 W=5
-L=0.15
+L=0.5
 body=VGND
 nf=1
 mult=1
@@ -270,7 +270,7 @@ spiceprefix=X
 }
 C {sky130_fd_pr/nfet3_01v8.sym} -390 -100 0 0 {name=M11
 W=2
-L=0.15
+L=0.2
 body=VGND
 nf=1
 mult=1
@@ -285,7 +285,7 @@ spiceprefix=X
 }
 C {sky130_fd_pr/nfet3_01v8.sym} -350 10 0 1 {name=M12
 W=5
-L=0.15
+L=0.5
 body=VGND
 nf=1
 mult=1
@@ -435,7 +435,7 @@ spiceprefix=X
 }
 C {sky130_fd_pr/nfet3_01v8.sym} 280 10 0 0 {name=M4
 W=5
-L=0.15
+L=0.5
 body=VGND
 nf=1
 mult=1
@@ -450,7 +450,7 @@ spiceprefix=X
 }
 C {sky130_fd_pr/nfet3_01v8.sym} 320 -100 0 1 {name=M2
 W=2
-L=0.15
+L=0.2
 body=VGND
 nf=1
 mult=1
