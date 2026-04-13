@@ -57,7 +57,7 @@ C {devices/vsource.sym} 100 -400 0 0 {name=V1 value=1.8}
 C {devices/gnd.sym} 100 -370 0 0 {name=l1 lab=VGND}
 C {devices/vsource.sym} 200 -400 0 0 {name=V2 value="PULSE(0 1.8 1n 1n 1n 10u 20u)"}
 C {devices/gnd.sym} 200 -370 0 0 {name=l2 lab=VGND}
-C {devices/vsource.sym} 390 -400 0 0 {name=V3 value=0.8}
+C {devices/vsource.sym} 390 -400 0 0 {name=V3 value=0.4}
 C {devices/gnd.sym} 390 -370 0 0 {name=l3 lab=VGND}
 C {devices/code.sym} 500 -450 0 0 {name=TT_MODELS
 

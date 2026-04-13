@@ -194,7 +194,7 @@ model=pfet_01v8
 spiceprefix=X
 }
 C {sky130_fd_pr/pfet3_01v8.sym} 140 -210 0 0 {name=M3
-W=5
+W=1
 L=0.3
 body=VPWR
 nf=1
@@ -209,7 +209,7 @@ model=pfet_01v8
 spiceprefix=X
 }
 C {sky130_fd_pr/pfet3_01v8.sym} 320 -210 0 1 {name=M1
-W=5
+W=1
 L=0.3
 body=VPWR
 nf=1
