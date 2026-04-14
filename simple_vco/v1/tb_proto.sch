@@ -50,6 +50,8 @@ N 640 -220 700 -220 {lab=bias}
 N 30 -370 100 -370 {lab=VGND}
 N 580 -220 610 -220 {lab=clk_p}
 N 580 -180 610 -180 {lab=clk_n}
+N 610 -220 680 -105 {lab=clk_p}
+N 610 -180 680 -45 {lab=clk_n}
 C {bias_gen.sym} 200 -200 0 0 {name=x1}
 C {clk_core.sym} 500 -200 0 0 {name=x2}
 C {clk_div.sym} 800 -200 0 0 {name=x3}
@@ -57,9 +59,9 @@ C {devices/vsource.sym} 100 -400 0 0 {name=V1 value=1.8}
 C {devices/gnd.sym} 100 -370 0 0 {name=l1 lab=VGND}
 C {devices/vsource.sym} 200 -400 0 0 {name=V2 value="PULSE(0 1.8 1n 1n 1n 10u 20u)"}
 C {devices/gnd.sym} 200 -370 0 0 {name=l2 lab=VGND}
-C {devices/vsource.sym} 390 -400 0 0 {name=V3 value=0.4}
+C {devices/vsource.sym} 390 -400 0 0 {name=V3 value=0.0}
 C {devices/gnd.sym} 390 -370 0 0 {name=l3 lab=VGND}
-C {devices/code.sym} 500 -450 0 0 {name=TT_MODELS
+C {devices/code.sym} 450 -450 0 0 {name=TT_MODELS
 
 only_toplevel=true
 
@@ -76,24 +78,24 @@ value="
 "
 
 spice_ignore=false}
-C {devices/code.sym} 700 -450 0 0 {name=SIMULATION
+C {devices/code.sym} 565 -450 0 0 {name=SIMULATION
 
 only_toplevel=false
 
 value="
 
 .param mc_mm_switch=0
-
+*.option savecurrents
 .control
 
-save all
+*save all
 
-tran 5p 1u
+tran 5p 50n
 *plot CLK_OUT CLK_P CLK_N
-plot diff=par(clk_n - clk_p)
-plot bias
+*plot diff_out
+*plot bias
 
-*quit 0
+quit 0
 
 .endc
 
@@ -112,3 +114,47 @@ C {devices/vsource.sym} 30 -340 0 0 {name=V4 value=0 savecurrent=false}
 C {devices/gnd.sym} 30 -310 0 0 {name=l11 lab=0}
 C {devices/lab_wire.sym} 610 -220 0 0 {name=p2 lab=clk_p}
 C {devices/lab_wire.sym} 610 -180 0 0 {name=p3 lab=clk_n}
+C {devices/code_shown.sym} 830 -440 0 0 {name=PARAMS only_toplevel=false value=".param WP_C=1 LP_C=0.3
++ WP_D=1 LP_D=0.3
++ WN_MAIN=2 LN_MAIN=0.2
++ WN_CC=0.42 LN_CC=0.2
++ WN_TAIL=5 LN_TAIL=0.5
+"}
+C {devices/isource.sym} 680 -75 0 0 {name=I0 value="PULSE(0 100u 1n 20p 20p 80p 0 1)"}
+C {devices/code.sym} 680 -450 0 0 {name=MEASUREMENTS
+
+only_toplevel=false
+
+value="
+* 1. Create a continuous differential signal
+*B_diff_clk diff_out 0 V=V(clk_p) - V(clk_n)
+
+* 2. Frequency Measurement 
+* (Wait for the 30th crossing to ensure any startup jitter is gone)
+*.meas tran t_start TRIG V(diff_out) VAL=0 RISE=30
+*.meas tran t_end   TRIG V(diff_out) VAL=0 RISE=41
+*.meas tran period  PARAM='t_end - t_start'
+*.meas tran freq    PARAM='1/period'
+
+* 3. Amplitude / Robustness Measurement
+* (Measure the peak differential voltage during that exact period)
+*.meas tran v_peak MAX V(diff_out) FROM=t_start TO=t_end
+*.meas tran v_pp PP V(diff_out) from=30n to=40n
+
+
+* 1. Create a continuous differential signal
+B_diff_clk diff_out 0 V=V(clk_p) - V(clk_n)
+
+* 2. Frequency Measurement 
+* (Using WHEN to grab exact timestamps)
+.meas tran t_start WHEN V(diff_out)=0 RISE=30
+.meas tran t_end   WHEN V(diff_out)=0 RISE=41
+
+* (Divide by 11 because RISE 30 to 41 is 11 cycles)
+.meas tran period  PARAM='(t_end - t_start) / 11'
+.meas tran freq    PARAM='1 / period'
+
+* 3. Amplitude / Robustness Measurement
+* (Your static window Peak-to-Peak approach)
+.meas tran v_pp PP V(diff_out) FROM=30n TO=40n
+"}

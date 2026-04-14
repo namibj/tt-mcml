@@ -194,8 +194,8 @@ model=pfet_01v8
 spiceprefix=X
 }
 C {sky130_fd_pr/pfet3_01v8.sym} 140 -210 0 0 {name=M3
-W=1
-L=0.3
+W=WP_C
+L=LP_C
 body=VPWR
 nf=1
 mult=1
@@ -209,8 +209,8 @@ model=pfet_01v8
 spiceprefix=X
 }
 C {sky130_fd_pr/pfet3_01v8.sym} 320 -210 0 1 {name=M1
-W=1
-L=0.3
+W=WP_D
+L=LP_D
 body=VPWR
 nf=1
 mult=1
@@ -434,8 +434,8 @@ model=nfet_01v8
 spiceprefix=X
 }
 C {sky130_fd_pr/nfet3_01v8.sym} 280 10 0 0 {name=M4
-W=5
-L=0.5
+W=WN_TAIL
+L=LN_TAIL
 body=VGND
 nf=1
 mult=1
@@ -449,8 +449,8 @@ model=nfet_01v8
 spiceprefix=X
 }
 C {sky130_fd_pr/nfet3_01v8.sym} 320 -100 0 1 {name=M2
-W=2
-L=0.2
+W=WN_MAIN
+L=LN_MAIN
 body=VGND
 nf=1
 mult=1
