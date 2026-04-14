@@ -49,21 +49,25 @@ def generate_schematic(WP_C, WP_D, WN_MAIN, WN_CC, WN_TAIL, LP_C, LP_D, LN_MAIN,
 # 2. Core Simulation Routine
 # ==========================================
 
-def run_simulation(WP_C, WP_D, WN_MAIN, WN_CC, WN_TAIL, V3_val):
+def run_simulation(WP_C, WP_D, WN_MAIN, WN_CC, WN_TAIL, LP_C, LP_D, LN_MAIN, LN_CC, LN_TAIL, V3_val):
     """Checks memory cache, templates files, runs ngspice, and parses output."""
+    # Update cache key to include all 11 parameters
     params_key = (
-        round(WP_C, 6), round(WP_D, 6), 
-        round(WN_MAIN, 6), round(WN_CC, 6), 
-        round(WN_TAIL, 6), round(V3_val, 6)
+        round(WP_C, 6), round(WP_D, 6), round(WN_MAIN, 6), round(WN_CC, 6), round(WN_TAIL, 6),
+        round(LP_C, 6), round(LP_D, 6), round(LN_MAIN, 6), round(LN_CC, 6), round(LN_TAIL, 6),
+        round(V3_val, 6)
     )
     
     if params_key in simulation_cache:
         return simulation_cache[params_key]
 
     print(f"\n[Run] Evaluating: WP_C={WP_C:.2f}, WP_D={WP_D:.2f}, WN_MAIN={WN_MAIN:.2f}, "
-          f"WN_CC={WN_CC:.2f}, WN_TAIL={WN_TAIL:.2f}, V3={V3_val:.2f}")
+          f"WN_CC={WN_CC:.2f}, WN_TAIL={WN_TAIL:.2f}, "
+          f"LP_C={LP_C:.2f}, LP_D={LP_D:.2f}, LN_MAIN={LN_MAIN:.2f}, "
+          f"LN_CC={LN_CC:.2f}, LN_TAIL={LN_TAIL:.2f}, V3={V3_val:.2f}")
 
-    generate_schematic(WP_C, WP_D, WN_MAIN, WN_CC, WN_TAIL, V3_val)
+    # Ensure generate_schematic is also called with all 11 parameters
+    generate_schematic(WP_C, WP_D, WN_MAIN, WN_CC, WN_TAIL, LP_C, LP_D, LN_MAIN, LN_CC, LN_TAIL, V3_val)
 
     # Execute xschem netlisting
     try:
@@ -103,12 +107,12 @@ def run_simulation(WP_C, WP_D, WN_MAIN, WN_CC, WN_TAIL, V3_val):
 # 3. Objective and Constraint Functions
 # ==========================================
 
-def objective(WP_C, WP_D, WN_MAIN, WN_CC, WN_TAIL, V3_val):
-    freq, _ = run_simulation(WP_C, WP_D, WN_MAIN, WN_CC, WN_TAIL, V3_val)
+def objective(WP_C, WP_D, WN_MAIN, WN_CC, WN_TAIL, LP_C, LP_D, LN_MAIN, LN_CC, LN_TAIL, V3_val):
+    freq, _ = run_simulation(WP_C, WP_D, WN_MAIN, WN_CC, WN_TAIL, LP_C, LP_D, LN_MAIN, LN_CC, LN_TAIL, V3_val)
     return freq
 
-def constraint_func(WP_C, WP_D, WN_MAIN, WN_CC, WN_TAIL, V3_val):
-    _, v_pp = run_simulation(WP_C, WP_D, WN_MAIN, WN_CC, WN_TAIL, V3_val)
+def constraint_func(WP_C, WP_D, WN_MAIN, WN_CC, WN_TAIL, LP_C, LP_D, LN_MAIN, LN_CC, LN_TAIL, V3_val):
+    _, v_pp = run_simulation(WP_C, WP_D, WN_MAIN, WN_CC, WN_TAIL, LP_C, LP_D, LN_MAIN, LN_CC, LN_TAIL, V3_val)
     return v_pp
 
 # ==========================================
