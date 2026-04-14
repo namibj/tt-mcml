@@ -2,7 +2,8 @@ import os
 import re
 import subprocess
 import numpy as np
-from bayes_opt import BayesianOptimization, NonLinearConstraint
+from bayes_opt import BayesianOptimization
+from scipy.optimize import NonlinearConstraint
 
 # ==========================================
 # 1. Caching & File Templating Setup
@@ -132,7 +133,7 @@ def main():
     }
 
     # Define the Non-Linear Constraint: v_pp >= 1.0 (Upper bound is infinity)
-    constraint = NonLinearConstraint(constraint_func, lb=1.0, ub=np.inf)
+    constraint = NonlinearConstraint(constraint_func, lb=1.0, ub=np.inf)
 
     # Initialize the optimizer
     optimizer = BayesianOptimization(
