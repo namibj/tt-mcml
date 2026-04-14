@@ -40,7 +40,7 @@ def generate_schematic(WP_C, WP_D, WN_MAIN, WN_CC, WN_TAIL, LP_C, LP_D, LN_MAIN,
         content
     )
 
-    content = re.sub(r'(name=V3\s+value=)[0-9\.-]+', fr'\g<1>{v3_val:.6g}', content)
+    content = re.sub(r'(name=V3\s+value=)[0-9\.-]+', fr'\g<1>{V3_val:.6g}', content)
 
     with open(output_file, 'w') as f:
         f.write(content)
