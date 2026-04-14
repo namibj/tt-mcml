@@ -14,7 +14,7 @@ from scipy.optimize import NonlinearConstraint
 simulation_cache = {}
 STATE_FILE = "opt_state.json"
 
-def generate_schematic(wp_c, wp_d, wn_main, wn_cc, wn_tail, v3_val):
+def generate_schematic(WP_C, WP_D, WN_MAIN, WN_CC, WN_TAIL, LP_C, LP_D, LN_MAIN, LN_CC, LN_TAIL, V3_val):
     """Reads base schematic, replaces parameters with line breaks, writes temp file."""
     input_file = "tb_proto.sch"
     output_file = "tb_proto_opt.sch"
@@ -27,13 +27,13 @@ def generate_schematic(wp_c, wp_d, wn_main, wn_cc, wn_tail, v3_val):
         raise
 
     new_param_str = (
-        f'name=PARAMS only_toplevel=false value=".param WP_C={wp_c:.6g} LP_C=0.3\n'
-        f'+ WP_D={wp_d:.6g} LP_D=0.3\n'
-        f'+ WN_MAIN={wn_main:.6g} LN_MAIN=0.2\n'
-        f'+ WN_CC={wn_cc:.6g} LN_CC=0.2\n'
-        f'+ WN_TAIL={wn_tail:.6g} LN_TAIL=0.5"'
+        f'name=PARAMS only_toplevel=false value=".param WP_C={WP_C:.6g} LP_C={LP_C:.6g}\n'
+        f'+ WP_D={WP_D:.6g} LP_D={LP_D:.6g}\n'
+        f'+ WN_MAIN={WN_MAIN:.6g} LN_MAIN={LN_MAIN:.6g}\n'
+        f'+ WN_CC={WN_CC:.6g} LN_CC={LN_CC:.6g}\n'
+        f'+ WN_TAIL={WN_TAIL:.6g} LN_TAIL={LN_TAIL:.6g}"'
     )
-    
+
     content = re.sub(
         r'name=PARAMS\s+only_toplevel=false\s+value="\.param[^"]+"', 
         new_param_str, 
@@ -117,11 +117,16 @@ def constraint_func(WP_C, WP_D, WN_MAIN, WN_CC, WN_TAIL, V3_val):
 
 def main():
     pbounds = {
-        'WP_C': (0.42, 10.0),
-        'WP_D': (0.42, 10.0),
-        'WN_MAIN': (0.42, 10.0),
-        'WN_CC': (0.42, 10.0),
-        'WN_TAIL': (1.0, 20.0),
+        'WP_C': (0.42, 20.0),
+        'WP_D': (0.42, 20.0),
+        'WN_MAIN': (0.42, 20.0),
+        'WN_CC': (0.42, 20.0),
+        'WN_TAIL': (0.42, 20.0),
+        'LP_C': (0.15, 20.0),
+        'LP_D': (0.15, 20.0),
+        'LN_MAIN': (0.15, 20.0),
+        'LN_CC': (0.15, 20.0),
+        'LN_TAIL': (0.15, 20.0),
         'V3_val': (0.0, 1.8)
     }
 
@@ -145,8 +150,11 @@ def main():
         # Inject the baseline only if we are starting completely fresh
         optimizer.probe(
             params={
-                "WP_C": 1.0, "WP_D": 1.0, "WN_MAIN": 2.0, 
-                "WN_CC": 0.42, "WN_TAIL": 5.0, "V3_val": 0.0
+                "WP_C": 1.0, "WP_D": 1.0, "WN_MAIN": 2.0,
+                "WN_CC": 0.42, "WN_TAIL": 5.0,
+                "LP_C": 0.3, "LP_D": 0.3, "LN_MAIN": 0.2,
+                "LN_CC": 0.2, "LN_TAIL": 0.5,
+                "V3_val": 0.0
             },
             lazy=True
         )
