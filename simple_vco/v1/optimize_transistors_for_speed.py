@@ -14,7 +14,7 @@ from scipy.optimize import NonlinearConstraint
 simulation_cache = {}
 
 def generate_schematic(wp_c, wp_d, wn_main, wn_cc, wn_tail, v3_val):
-    """Reads the base schematic, replaces parameters, and writes to a temp file."""
+    """Reads the base schematic, replaces parameters with line breaks, and writes to a temp file."""
     input_file = "tb_proto.sch"
     output_file = "tb_proto_opt.sch"
     
@@ -25,20 +25,24 @@ def generate_schematic(wp_c, wp_d, wn_main, wn_cc, wn_tail, v3_val):
         print(f"Error: Base schematic '{input_file}' not found. Cannot proceed.")
         raise
 
-    # 1. Dynamically replace the PARAMS block while keeping lengths at static defaults
-    # Rebuilding the exact value string based on the user's required parameters
-    new_param_str = (f'name=PARAMS only_toplevel=false value=".param '
-                     f'WP_C={wp_c:.6g} LP_C=0.3+ '
-                     f'WP_D={wp_d:.6g} LP_D=0.3+ '
-                     f'WN_MAIN={wn_main:.6g} LN_MAIN=0.2+ '
-                     f'WN_CC={wn_cc:.6g} LN_CC=0.2+ '
-                     f'WN_TAIL={wn_tail:.6g} LN_TAIL=0.5"')
+    # 1. Dynamically replace the PARAMS block with proper SPICE line continuations (\n+)
+    new_param_str = (
+        f'name=PARAMS only_toplevel=false value=".param WP_C={wp_c:.6g} LP_C=0.3\n'
+        f'+ WP_D={wp_d:.6g} LP_D=0.3\n'
+        f'+ WN_MAIN={wn_main:.6g} LN_MAIN=0.2\n'
+        f'+ WN_CC={wn_cc:.6g} LN_CC=0.2\n'
+        f'+ WN_TAIL={wn_tail:.6g} LN_TAIL=0.5"'
+    )
     
-    # Regex to find the existing PARAMS line and replace the value attribute
-    content = re.sub(r'name=PARAMS\s+only_toplevel=false\s+value="\.param[^"]+"', new_param_str, content)
+    # Regex to find the existing PARAMS line and replace the value attribute.
+    # [^"]+ safely matches everything inside the quotes, including any existing newlines.
+    content = re.sub(
+        r'name=PARAMS\s+only_toplevel=false\s+value="\.param[^"]+"', 
+        new_param_str, 
+        content
+    )
 
     # 2. Dynamically replace the V3 voltage source value
-    # Regex targets "name=V3 value=" followed by any numbers/decimals
     content = re.sub(r'(name=V3\s+value=)[0-9\.-]+', fr'\g<1>{v3_val:.6g}', content)
 
     with open(output_file, 'w') as f:
