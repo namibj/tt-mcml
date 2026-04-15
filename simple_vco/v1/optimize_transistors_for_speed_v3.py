@@ -121,17 +121,28 @@ def constraint_func(WP_C, WP_D, WN_MAIN, WN_CC, WN_TAIL, LP_C, LP_D, LN_MAIN, LN
 
 def main():
     pbounds = {
-        'WP_C': (0.42, 20.0),
-        'WP_D': (0.42, 20.0),
+        #'WP_C': (0.42, 20.0),
+        #'WP_D': (0.42, 20.0),
+        #'WN_MAIN': (0.42, 20.0),
+        #'WN_CC': (0.42, 20.0),
+        #'WN_TAIL': (0.42, 20.0),
+        #'LP_C': (0.15, 20.0),
+        #'LP_D': (0.15, 20.0),
+        #'LN_MAIN': (0.15, 20.0),
+        #'LN_CC': (0.15, 20.0),
+        #'LN_TAIL': (0.15, 20.0),
+        #'V3_val': (0.0, 1.8)
+        'WP_C': (0.42, 5.0),
+        'WP_D': (0.42, 5.0),
         'WN_MAIN': (0.42, 20.0),
-        'WN_CC': (0.42, 20.0),
-        'WN_TAIL': (0.42, 20.0),
+        'WN_CC': (0.42, 5.0),
+        'WN_TAIL': (0.42, 10.0),
         'LP_C': (0.15, 20.0),
         'LP_D': (0.15, 20.0),
-        'LN_MAIN': (0.15, 20.0),
-        'LN_CC': (0.15, 20.0),
-        'LN_TAIL': (0.15, 20.0),
-        'V3_val': (0.0, 1.8)
+        'LN_MAIN': (0.15, 2.0),
+        'LN_CC': (0.15, 2.0),
+        'LN_TAIL': (0.15, 3.0),
+        'V3_val': (0.0, 0.0)
     }
 
     constraint = NonlinearConstraint(constraint_func, lb=1.5, ub=np.inf)
