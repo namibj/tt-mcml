@@ -134,7 +134,7 @@ def main():
         'V3_val': (0.0, 1.8)
     }
 
-    constraint = NonlinearConstraint(constraint_func, lb=1.0, ub=np.inf)
+    constraint = NonlinearConstraint(constraint_func, lb=1.5, ub=np.inf)
 
     optimizer = BayesianOptimization(
         f=objective,
@@ -168,7 +168,7 @@ def main():
     
     # Execution parameters
     init_points = 5 if not os.path.exists(STATE_FILE) else 0
-    n_iterations = 60
+    n_iterations = 20
 
     # 1. Evaluate any initial/probe points first and save
     if init_points > 0 or not os.path.exists(STATE_FILE):
