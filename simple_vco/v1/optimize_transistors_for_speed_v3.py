@@ -14,6 +14,23 @@ from scipy.optimize import NonlinearConstraint
 simulation_cache = {}
 STATE_FILE = "opt_state.json"
 
+MIN_VALID_VPP = 10e-3  # 10 mV: below this, treat as noise-floor artifact
+MAX_VALID_FREQ = 40e9  # 40 GHz hard cap for now
+INVALID_OBJECTIVE_VALUE = 0.0
+INVALID_CONSTRAINT_VALUE = 0.0
+
+def sanitize_measurement(freq, v_pp):
+    """Return sanitized (freq, v_pp, is_valid, reason) for optimizer consumption."""
+    if not np.isfinite(freq) or not np.isfinite(v_pp):
+        return INVALID_OBJECTIVE_VALUE, INVALID_CONSTRAINT_VALUE, False, "non-finite result"
+    if v_pp < MIN_VALID_VPP:
+        return INVALID_OBJECTIVE_VALUE, INVALID_CONSTRAINT_VALUE, False, "below 10 mV threshold"
+    if freq <= 0.0:
+        return INVALID_OBJECTIVE_VALUE, INVALID_CONSTRAINT_VALUE, False, "non-positive frequency"
+    if freq > MAX_VALID_FREQ:
+        return INVALID_OBJECTIVE_VALUE, INVALID_CONSTRAINT_VALUE, False, "above 40 GHz hard cap"
+    return freq, v_pp, True, "valid"
+
 def generate_schematic(WP_C, WP_D, WN_MAIN, WN_CC, WN_TAIL, LP_C, LP_D, LN_MAIN, LN_CC, LN_TAIL, V3_val):
     """Reads base schematic, replaces parameters with line breaks, writes temp file."""
     input_file = "tb_proto.sch"
@@ -91,9 +108,16 @@ def run_simulation(WP_C, WP_D, WN_MAIN, WN_CC, WN_TAIL, LP_C, LP_D, LN_MAIN, LN_
         match = re.search(r'freq\s*=\s*([0-9\.eE+-]+).*?v_pp\s*=\s*([0-9\.eE+-]+)', result.stdout, re.IGNORECASE | re.DOTALL)
         
         if match:
-            freq = float(match.group(1))
-            v_pp = float(match.group(2))
-            print(f"  --> Success: Freq = {freq / 1e9:.3f} GHz, V_pp = {v_pp:.3f} V")
+            raw_freq = float(match.group(1))
+            raw_v_pp = float(match.group(2))
+            freq, v_pp, is_valid, reason = sanitize_measurement(raw_freq, raw_v_pp)
+            if is_valid:
+                print(f"  --> Success: Freq = {freq / 1e9:.3f} GHz, V_pp = {v_pp:.3f} V")
+            else:
+                print(
+                    f"  --> Rejected measurement: raw Freq = {raw_freq / 1e9:.3f} GHz, "
+                    f"raw V_pp = {raw_v_pp:.6f} V ({reason})."
+                )
         else:
             print("  --> Parse Error: Oscillation likely failed.")
             
@@ -145,7 +169,7 @@ def main():
         'V3_val': (0.0, 0.0)
     }
 
-    constraint = NonlinearConstraint(constraint_func, lb=1.5, ub=np.inf)
+    constraint = NonlinearConstraint(constraint_func, lb=MIN_VALID_VPP, ub=np.inf)
 
     optimizer = BayesianOptimization(
         f=objective,
@@ -179,7 +203,7 @@ def main():
     
     # Execution parameters
     init_points = 5 if not os.path.exists(STATE_FILE) else 0
-    n_iterations = 20
+    n_iterations = 200
 
     # 1. Evaluate any initial/probe points first and save
     if init_points > 0 or not os.path.exists(STATE_FILE):
