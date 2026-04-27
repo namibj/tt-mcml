@@ -1,0 +1,35 @@
+* 1-level MCML Testbench (Model=01v8)
+
+.lib $::env(SKYWATER_MODELS)/sky130.lib.spice tt
+
+.param VDD = 1.8
+.param VCM = 1.7
+.param ITAIL = 0.0001
+.param RLOAD = 4000.0
+
+Vdd VDD 0 VDD
+I0 tail 0 ITAIL
+
+V_in1_p in1_p 0 dc VCM ac 0.5
+V_in1_n in1_n 0 dc VCM ac -0.5
+
+M_tail_p n1 in1_p tail 0 sky130_fd_pr__nfet_01v8 w=2.0 l=0.15
+M_tail_n n2 in1_n tail 0 sky130_fd_pr__nfet_01v8 w=2.0 l=0.15
+
+* Loads (XOR configuration)
+V_meas_n1 n1 out_p 0
+V_meas_n2 n2 out_n 0
+R_out_p VDD out_p RLOAD
+R_out_n VDD out_n RLOAD
+
+.control
+op
+let vtail = v(tail)
+print vtail
+ac dec 20 10M 100G
+let vout_diff = v(out_n) - v(out_p)
+meas ac ugf WHEN vmag(vout_diff)=1.0 FALL=1
+print ugf
+quit
+.endc
+.end
