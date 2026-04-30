@@ -40,14 +40,30 @@ def generate_tb(args, w_list, l_list, output_file):
 
     # Find the skywater path from env or defaults
     skywater_models = os.environ.get('SKYWATER_MODELS', '')
+    pdk_root = os.environ.get('PDK_ROOT', os.path.expanduser('~/.ciel/ciel/sky130/versions/7b70722e33c03fcb5dabcf4d479fb0822d9251c9'))
     if skywater_models:
         skywater_lib = f"{skywater_models}/sky130.lib.spice"
     else:
-        skywater_lib = os.environ.get('SKYWATER_MODELS', '$::env(SKYWATER_MODELS)') + "/sky130.lib.spice"
+        skywater_lib = f"{pdk_root}/sky130A/libs.tech/ngspice/sky130.lib.spice"
+
+    # Try to fallback to explicitly including the model corners if the general lib is not available
+    fallback_includes = [
+        f".include {pdk_root}/sky130A/libs.ref/sky130_fd_pr/spice/sky130_fd_pr__nfet_01v8__tt.corner.spice",
+        f".include {pdk_root}/sky130A/libs.ref/sky130_fd_pr/spice/sky130_fd_pr__nfet_01v8_lvt__tt.corner.spice",
+        f".include {pdk_root}/sky130A/libs.ref/sky130_fd_pr/spice/sky130_fd_pr__nfet_03v3_nvt__tt.corner.spice",
+    ]
 
     with open(output_file, "w") as f:
         f.write(f"* {args.levels}-level MCML Testbench (Model={args.model})\n\n")
-        f.write(f".lib {skywater_lib} tt\n\n")
+        if os.path.exists(skywater_lib) and not "libs.tech/ngspice/sky130.lib.spice" in skywater_lib:
+            f.write(f".lib {skywater_lib} tt\n")
+        else:
+            f.write(f"*.lib {skywater_lib} tt\n")
+
+        for inc in fallback_includes:
+            f.write(f"{inc}\n")
+        f.write("\n")
+        f.write(".param mc_mm_switch=0\n")
 
         # Include hd library if user wants, but normally just the core lib is enough.
         skywater_stdcells = os.environ.get('SKYWATER_STDCELLS', '')
@@ -84,8 +100,8 @@ def generate_tb(args, w_list, l_list, output_file):
                 next_nodes.extend([node_p, node_n])
                 node_idx += 2
 
-                f.write(f"M_{base_node}_p {node_p} in{level}_p {base_node} 0 {model_name} w={w} l={l}\n")
-                f.write(f"M_{base_node}_n {node_n} in{level}_n {base_node} 0 {model_name} w={w} l={l}\n")
+                f.write(f"XM_{base_node}_p {node_p} in{level}_p {base_node} 0 {model_name} W={w} L={l}\n")
+                f.write(f"XM_{base_node}_n {node_n} in{level}_n {base_node} 0 {model_name} W={w} L={l}\n")
 
             nodes = next_nodes
             next_nodes = []
@@ -105,17 +121,21 @@ def generate_tb(args, w_list, l_list, output_file):
             else:
                 f.write(f"V_meas_{top_node} {top_node} out_n 0\n")
 
-        f.write("R_out_p VDD out_p RLOAD\n")
-        f.write("R_out_n VDD out_n RLOAD\n\n")
+        f.write(f"R_out_p VDD out_p {rload}\n")
+        f.write(f"R_out_n VDD out_n {rload}\n\n")
+
+        f.write(f"C_out_p out_p 0 10f\n")
+        f.write(f"C_out_n out_n 0 10f\n\n")
 
         f.write(".control\n")
         f.write("op\n")
         f.write("let vtail = v(tail)\n")
         f.write("print vtail\n")
 
-        f.write("ac dec 20 10M 100G\n")
+        f.write("ac dec 20 1M 1000G\n")
         f.write("let vout_diff = v(out_n) - v(out_p)\n")
-        f.write("meas ac ugf WHEN vmag(vout_diff)=1.0 FALL=1\n")
+        f.write("let vmag = mag(vout_diff)\n")
+        f.write("meas ac ugf WHEN vmag=1.0 FALL=1\n")
         f.write("print ugf\n")
         f.write("quit\n")
         f.write(".endc\n")
